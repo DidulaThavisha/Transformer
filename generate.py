@@ -17,9 +17,13 @@ def generate():
     string = 'emily.an'
     emb = torch.tensor([instance.stoi[i] for i in string]).unsqueeze(0)
     model = TextGenerator()
+    
+    for name,p in model.named_parameters():
+        if p.requires_grad:
+            print(name,p.numel()) 
     model.load_state_dict(torch.load(opt.load_path))
     model.eval()
-    for _ in range(0, 100):
+    for _ in range(0, 10):
         with torch.no_grad(): 
             pred = model(emb)
             B, T, C = pred.shape

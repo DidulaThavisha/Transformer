@@ -8,8 +8,9 @@ class TextDataset(Dataset):
     def __init__(self, words):        
         self.words = words
         self.vocab = opt.vocab
-        self.stoi = {self.vocab[i]: i for i in range(27)}
-        self.itos = {i: self.vocab[i] for i in range(27)}
+        self.vocab_size = opt.vocab_size
+        self.stoi = {self.vocab[i]: i for i in range(self.vocab_size)}
+        self.itos = {i: self.vocab[i] for i in range(self.vocab_size)}
         self.window_size = opt.window_size
         self.batch_size = opt.batch_size
 

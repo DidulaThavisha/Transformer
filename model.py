@@ -12,6 +12,7 @@ VOCAB_SIZE = opt.vocab_size
 WINDOW_SIZE = opt.window_size
 HEAD_SIZE = opt.head_size
 N_EMBED = opt.n_embed
+N_LAYERS = opt.n_layers
 N_HEADS = N_EMBED//HEAD_SIZE
 
 
@@ -46,26 +47,42 @@ class MultiHead(nn.Module):
         return x
 
 
+class Block(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        self.decoder = MultiHead()
+        self.ffn = nn.Sequential(
+            nn.Linear(N_EMBED,N_EMBED*4),
+            nn.ReLU(),
+            nn.Linear(4*N_EMBED,N_EMBED)
+        )
+        self.ln1 = nn.LayerNorm(N_EMBED)
+        self.ln2 = nn.LayerNorm(N_EMBED)
+
+    def forward(self, x):
+        x = self.ln1(x)
+        x = x + self.decoder(x)
+        x = self.ln2(x)
+        x = x + self.ffn(x)
+        return x
+
+
 class TextGenerator(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         self.token_embedding = nn.Embedding(VOCAB_SIZE, N_EMBED)
         self.postional_embedding = nn.Embedding(WINDOW_SIZE, N_EMBED)
-        self.decoder = MultiHead()
-        self.ffn = nn.Sequential(
-            nn.Linear(N_EMBED,N_EMBED),
-            nn.ReLU()
-        )
+        self.decoder_block = nn.Sequential(*[Block() for _ in range(N_LAYERS)])
+        self.norm = nn.LayerNorm(N_EMBED)
         self.ln = nn.Linear(N_EMBED,VOCAB_SIZE)
 
     def forward(self, x):
         token_embed = self.token_embedding(x)
         pos_embed = self.postional_embedding(torch.arange(WINDOW_SIZE))
         x = token_embed + pos_embed
-        x = x + self.decoder(x)
-        x = x + self.ffn(x)
+        x = self.decoder_block(x)
+        x = self.norm(x)
         x = self.ln(x)
-
         return x
 
 

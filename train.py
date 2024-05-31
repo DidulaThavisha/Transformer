@@ -8,6 +8,8 @@ from model import TextGenerator
 from dataset import TextDataset
 
 def train_supervised(epochs, lr, window_size, batch_size, words_train, words_val):
+    min_val_loss = 100
+    model_to_save = nn.Module
     criterion = nn.CrossEntropyLoss()
     model = TextGenerator()
     optimizer = optim.AdamW(model.parameters(), lr=lr)
@@ -48,11 +50,12 @@ def train_supervised(epochs, lr, window_size, batch_size, words_train, words_val
                 val_loss += loss.item()
                 iterations +=1
         val_loss = val_loss/iterations
-        print("train loss: ",train_loss,'  |  ', "val loss: ", val_loss)
+        print(f"epoch:{i} ===>  train loss: {train_loss}  |   val loss: {val_loss}")
+        if val_loss<min_val_loss:
+            min_val_loss = val_loss
+            model_to_save = model
 
-    return model
-
-
+    return model_to_save
 
 
 def main():
