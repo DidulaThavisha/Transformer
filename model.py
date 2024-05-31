@@ -13,6 +13,7 @@ WINDOW_SIZE = opt.window_size
 HEAD_SIZE = opt.head_size
 N_EMBED = opt.n_embed
 N_LAYERS = opt.n_layer
+DEVICE = opt.device
 N_HEADS = N_EMBED//HEAD_SIZE
 
 
@@ -78,7 +79,7 @@ class TextGenerator(nn.Module):
 
     def forward(self, x):
         token_embed = self.token_embedding(x)
-        pos_embed = self.postional_embedding(torch.arange(WINDOW_SIZE))
+        pos_embed = self.postional_embedding(torch.arange(WINDOW_SIZE, device=DEVICE))
         x = token_embed + pos_embed
         x = self.decoder_block(x)
         x = self.norm(x)
