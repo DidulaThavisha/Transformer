@@ -23,8 +23,8 @@ def train_supervised(epochs, lr, window_size, batch_size, words_train, words_val
         for j in range(0, len(words_train)-window_size*batch_size,window_size*batch_size):
             x,y = instance[j]
             with torch.set_grad_enabled(True):
-                x.to(device)
-                y.to(device)
+                x = x.to(device)
+                y = y.to(device)
                 pred = model(x)
                 B, T, C = pred.shape
                 pred = pred.view(B*T, C)

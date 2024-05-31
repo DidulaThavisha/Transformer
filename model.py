@@ -24,7 +24,7 @@ class DecoderHead(nn.Module):
         self.key = nn.Linear(N_EMBED, HEAD_SIZE)
         self.query = nn.Linear(N_EMBED, HEAD_SIZE)
         self.value = nn.Linear(N_EMBED, HEAD_SIZE)
-        self.tril =  torch.tril(torch.ones((WINDOW_SIZE,WINDOW_SIZE)))
+        self.tril =  torch.tril(torch.ones((WINDOW_SIZE,WINDOW_SIZE), device=DEVICE)).to(DEVICE)
 
     def forward(self, x):
         x = x                                                                       # (B,T,C) C = 27
