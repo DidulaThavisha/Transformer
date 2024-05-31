@@ -31,7 +31,7 @@ class DecoderHead(nn.Module):
         k = self.key(x)                                                             # (B,T,C) C = 16
         q = self.query(x)                                                           # (B,T,C) C = 16 
         v = self.value(x)                                                           # (B,T,C) C = 16 
-        weights = q @ k.transpose(1,2)                                              # (B,T,C) @ (B,C,T) -->  (B,T,T)            T=8, C=16         
+        weights = q @ k.transpose(1,2) * HEAD_SIZE**-0.5                                             # (B,T,C) @ (B,C,T) -->  (B,T,T)            T=8, C=16         
         weights = weights.masked_fill(self.tril==0, float('-inf'))
         weights = F.softmax(weights,dim=1)
         x =  weights @ v                                                            # (B,T,T) @ (B,T,C) -->  (B,T,C)            T=8, C=16
