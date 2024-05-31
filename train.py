@@ -7,11 +7,11 @@ from config import parse_option
 from model import TextGenerator
 from dataset import TextDataset
 
-def train_supervised(epochs, lr, window_size, batch_size, words_train, words_val):
+def train_supervised(epochs, lr, window_size, batch_size, words_train, words_val, device):
     min_val_loss = 100
     model_to_save = nn.Module
     criterion = nn.CrossEntropyLoss()
-    model = TextGenerator()
+    model = TextGenerator().to(device)
     optimizer = optim.AdamW(model.parameters(), lr=lr)
     for i in range (epochs):
         train_loss = 0
@@ -22,6 +22,7 @@ def train_supervised(epochs, lr, window_size, batch_size, words_train, words_val
         for j in range(0, len(words_train)-window_size*batch_size,window_size*batch_size):
             x,y = instance[j]
             with torch.set_grad_enabled(True):
+                x,y = x.to(device), y.to(device)
                 pred = model(x)
                 B, T, C = pred.shape
                 pred = pred.view(B*T, C)
@@ -40,7 +41,8 @@ def train_supervised(epochs, lr, window_size, batch_size, words_train, words_val
         infer = []
         for j in range(0, len(words_val)-window_size*batch_size,window_size*batch_size):
             x,y = instance[j]
-            with torch.no_grad():            
+            with torch.no_grad(): 
+                x,y = x.to(device), y.to(device)           
                 pred = model(x)
                 B, T, C = pred.shape
                 infer.append(pred.argmax(dim=-1).view(B*T).cpu().numpy())
@@ -74,7 +76,8 @@ def main():
     batch_size = opt.batch_size
     lr = opt.learning_rate
     epochs = opt.epochs
-    model = train_supervised(epochs, lr, window_size, batch_size, words_train, words_val)    
+    device = opt.device
+    model = train_supervised(epochs, lr, window_size, batch_size, words_train, words_val, device)    
     torch.save(model.state_dict(), opt.save_path)
 
 

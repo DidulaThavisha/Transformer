@@ -12,7 +12,7 @@ VOCAB_SIZE = opt.vocab_size
 WINDOW_SIZE = opt.window_size
 HEAD_SIZE = opt.head_size
 N_EMBED = opt.n_embed
-N_LAYERS = opt.n_layers
+N_LAYERS = opt.n_layer
 N_HEADS = N_EMBED//HEAD_SIZE
 
 
