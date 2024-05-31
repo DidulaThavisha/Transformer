@@ -17,6 +17,7 @@ def generate():
     string = 'emily.an'
     emb = torch.tensor([instance.stoi[i] for i in string]).unsqueeze(0)
     model = TextGenerator()
+    model.to(opt.device)
     count = 0
     for name,p in model.named_parameters():
         if p.requires_grad:
@@ -26,13 +27,10 @@ def generate():
     model.eval()
     for _ in range(0, 1):
         with torch.no_grad(): 
-            print(emb)
-            pred = model(emb)
-            
+            emb = emb.to(opt.device)
+            pred = model(emb)            
             B, T, C = pred.shape
-            print(pred.shape)
-            emb = pred.argmax(dim=-1).view(B*T).unsqueeze(0)
-            
+            emb = pred.argmax(dim=-1).view(B*T).unsqueeze(0)            
             back_to_sting = "".join([instance.itos[ix] for ix in emb[0].cpu().numpy()])
             print(back_to_sting)
 
