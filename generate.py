@@ -14,7 +14,7 @@ start = ['e','m','i','l','y','.','a','n']
 
 def generate():
     instance = TextDataset(start)
-    string = 'emily.an'
+    string = 'emily.isabella.sophia.charlotte.'
     emb = torch.tensor([instance.stoi[i] for i in string]).unsqueeze(0)
     model = TextGenerator()
     model.to(opt.device)
