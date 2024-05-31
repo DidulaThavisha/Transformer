@@ -1,18 +1,17 @@
 import torch
 from torch.utils.data import Dataset
+from config import parse_option
 
-# from train import VOCAB_SIZE, WORDS
-
+opt = parse_option()
 
 class TextDataset(Dataset):
-    def __init__(self, words):
-        
+    def __init__(self, words):        
         self.words = words
-        self.vocab = sorted((set(self.words)))
+        self.vocab = opt.vocab
         self.stoi = {self.vocab[i]: i for i in range(27)}
         self.itos = {i: self.vocab[i] for i in range(27)}
-        self.window_size = 8
-        self.batch_size = 16
+        self.window_size = opt.window_size
+        self.batch_size = opt.batch_size
 
     def __getitem__(self, ix):
         x = torch.zeros((self.batch_size, self.window_size))
@@ -27,3 +26,9 @@ class TextDataset(Dataset):
             )
 
         return x.to(torch.int64), y.to(torch.int64)
+    
+    def itos(self, ix):
+        return self.itos[ix]
+    
+    def stoi(self, string):
+        return self.stoi[string]

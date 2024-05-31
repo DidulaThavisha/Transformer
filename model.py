@@ -1,17 +1,17 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from config import parse_option
 
 
 
+opt = parse_option()
 
-words = open('names.txt', 'r').read().splitlines()
-WORD_LIST = words
-WORDS = ".".join(WORD_LIST)
-VOCAB_SIZE = len(sorted((set(WORDS))))
-WINDOW_SIZE = 8
-HEAD_SIZE = 4
-N_EMBED = 16
+torch.manual_seed(opt.seed)
+VOCAB_SIZE = opt.vocab_size
+WINDOW_SIZE = opt.window_size
+HEAD_SIZE = opt.head_size
+N_EMBED = opt.n_embed
 N_HEADS = N_EMBED//HEAD_SIZE
 
 
@@ -57,7 +57,6 @@ class TextGenerator(nn.Module):
             nn.ReLU()
         )
         self.ln = nn.Linear(N_EMBED,VOCAB_SIZE)
-
 
     def forward(self, x):
         token_embed = self.token_embedding(x)
