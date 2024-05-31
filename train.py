@@ -11,7 +11,8 @@ def train_supervised(epochs, lr, window_size, batch_size, words_train, words_val
     min_val_loss = 100
     model_to_save = nn.Module
     criterion = nn.CrossEntropyLoss()
-    model = TextGenerator().to(device)
+    model = TextGenerator()
+    model.to(device)
     optimizer = optim.AdamW(model.parameters(), lr=lr)
     for i in range (epochs):
         train_loss = 0
