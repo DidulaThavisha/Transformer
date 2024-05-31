@@ -25,7 +25,7 @@ def generate():
     print(count)
     model.load_state_dict(torch.load(opt.load_path))
     model.eval()
-    for _ in range(0, 1):
+    for _ in range(0, 15):
         with torch.no_grad(): 
             emb = emb.to(opt.device)
             pred = model(emb)            
